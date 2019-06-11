@@ -9,6 +9,6 @@ function protected(req, res, next) {
             .status(401)
             .json({message: 'Please provide credentials'})
     }
-}
+};
 
 module.exports = protected;

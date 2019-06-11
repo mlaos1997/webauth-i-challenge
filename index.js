@@ -9,6 +9,7 @@ const SessionStore = require('connect-session-knex')(session);
 const Users = require('./users/users-model.js');
 
 const protected = require('./auth/protected-middleware');
+const generateToken = require('./auth/generateToken-middleware');
 
 const server = express();
 
@@ -74,10 +75,12 @@ server.post('/api/login', (req, res) => {
         .then(user => {
             // password is guess, user.password is the password in the database
             if (user && bcrypt.compareSync(password, user.password)) {
-                req.session.user = user; // saving info about user on session, save and send cookie with user info
+                const token = generateToken(user);
+
+                // req.session.user = user; // saving info about user on session, save and send cookie with user info
                 res
                     .status(200)
-                    .json({message: `Welcome ${user.username}!`});
+                    .json({message: `Welcome ${user.username}!`, token});
             } else {
                 res
                     .status(401)
@@ -117,6 +120,8 @@ server.get('/api/users', protected, (req, res) => {
         })
         .catch(err => res.send(err));
 });
+
+
 
 const port = process.env.PORT || 5000;
 server.listen(port, () => console.log(`\n** Running on port ${port} **\n`));
