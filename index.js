@@ -2,6 +2,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const SessionStore = require('connect-session-knex')(session);
 
@@ -23,6 +24,7 @@ const sessionConfig = {
             : false, // true in production
         httpOnly: true // cookie cannot be accessed with js
     },
+    // storing session in db
     store: new SessionStore({
         knex: require('./data/dbConfig'),
         tablename: 'sessions',
